@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}
+Главная
+{% endblock title %}
+{% block content %}
+{{ owner.username }}
+<div class="container"> 
+<h2>Создать заявку</h2>
+<form method='POST' action='{% url "requests:create_requestapp" %}'>
+    {% csrf_token %}
+    {{form.title}}<br>
+    {{form.text}}
+    <button type="submit" class="btn btn-primary">Отправить</button>
+</form>
+</div>
+<div class="container"> 
+<h2>Найти заявку по id</h2>
+<form method='POST' action='{% url "requests:find_request_id_sub" %}'>
+    {% csrf_token %}
+    <input type="search" placeholder="Введите ID" name="search_id">
+    <button type="submit" class="btn btn-primary">Найти</button>
+</form>
+</div>
+<div class="container">  
+<h2>Список заявок</h2>
+| <a href="{% url 'requests:list_of_requests'%}">Показать список заявок</a> |
+{% for request in page_obj %}
+    <article>
+        {{request.title}} |
+        {{request.text}} |
+        {{request.created}} |
+        <a href="{% url 'requests:find_request_id' request.id %}">добавить сообщение к заявке</a> |
+        <a href="{% url 'requests:find_messages_request_id' request.id %}">список сообщений</a> |
+    </article>
+    {% if not forloop.last %}<hr>{% endif %}
+{% endfor %} 
+{% if page_obj.has_other_pages %}
+<nav aria-label="Page navigation" class="my-5">
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page=1">Первая</a></li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+          Предыдущая
+        </a>
+      </li>
+    {% endif %}
+    {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+          <li class="page-item active">
+            <span class="page-link">{{ i }}</span>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+          </li>
+        {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+          Следующая
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+          Последняя
+        </a>
+      </li>
+    {% endif %}    
+  </ul>
+</nav>
+{% endif %} 
+</div>
+{% endblock content %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}
+Заявка
+{% endblock title %}
+{% block content %}
+<div class="container"> 
+<h2>Заявка ID {{requestapp.id}} </h2>
+<article>
+    {{requestapp.title}} |
+    {{requestapp.text}} |
+    {{requestapp.created}} |
+    {{requestapp.id}} |
+    <div class="container"> 
+    <h2>Сообщения</h2>
+    {% for message in messages %}
+    {{message.text}} <br>
+    {{message.created}} <br>
+    {% endfor %}
+    </div>
+</article>
+</div>
+<div class="container"> 
+<h2>Написать сообщение</h2>
+<form method='POST' action='{% url "requests:create_request_message" requestapp.id %}'>
+    {% csrf_token %}
+    {{form.text}}<br>
+    <button type="submit" class="btn btn-primary">Отправить</button>
+</form>
+</div>
+
+{% endblock content %}
